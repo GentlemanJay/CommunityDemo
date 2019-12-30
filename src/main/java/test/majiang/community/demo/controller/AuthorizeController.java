@@ -12,7 +12,9 @@ import test.majiang.community.demo.dto.AccessTokenDTO;
 import test.majiang.community.demo.dto.GithubUserDTO;
 import test.majiang.community.demo.provider.GithubProvider;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class AuthorizeController {
@@ -44,7 +46,8 @@ public class AuthorizeController {
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
-                           HttpServletRequest request){
+                           HttpServletRequest request,
+                           HttpServletResponse response){
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clientSecret);
@@ -60,13 +63,15 @@ public class AuthorizeController {
             User user = new User();
             user.setAccountId(githubProviderUser.getId());
             user.setName(githubProviderUser.getLogin());
-            user.setToken(UUID.randomUUID().toString());
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
             System.out.println("=====user:" + user);
-            //登陆成功，创建session和cookie
-            request.getSession().setAttribute("user",githubProviderUser);
+            //将获取到的token值写入cookie中,以便之后登陆首页进行用户校验
+            response.addCookie(new Cookie("token",token));
+//            request.getSession().setAttribute("user",githubProviderUser);
             return "redirect:/";
         } else {
             //登陆失败，重定向至首页

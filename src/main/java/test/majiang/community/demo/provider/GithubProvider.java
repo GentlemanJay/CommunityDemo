@@ -71,7 +71,7 @@ public class GithubProvider {
         //Hutool---GET请求
         String url = "https://api.github.com/user?access_token=" + accessToken;
         String content = HttpUtil.get(url);
-        System.out.println(content);
+//        System.out.println(content);
         return JSON.parseObject(content, GithubUserDTO.class);
     }
 
