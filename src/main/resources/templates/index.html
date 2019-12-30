@@ -27,14 +27,17 @@
                 <button type="submit" class="btn btn-default">Enter</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="https://github.com/login/oauth/authorize?client_id=a30fee9101e3e694b1f2&redirect_uri=http://localhost:8887/callback&scope=user&state=1">Sign in</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> U <span class="caret"></span></a>
+                <li class="dropdown" th:if="${session.user!=null}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="${session.user.getLogin()}"><span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">my message</a></li>
                         <li><a href="#">my profile</a></li>
                         <li><a href="#">sign out</a></li>
                     </ul>
+                </li>
+
+                <li th:if="${session.user==null}">
+                    <a href="https://github.com/login/oauth/authorize?client_id=a30fee9101e3e694b1f2&redirect_uri=http://localhost:8887/callback&scope=user&state=1">Sign in</a>
                 </li>
             </ul>
         </div>

@@ -1,13 +1,18 @@
 package test.majiang.community.demo.controller;
 
+import cn.hutool.core.lang.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import test.majiang.community.demo.Mapper.UserMapper;
+import test.majiang.community.demo.dao.User;
 import test.majiang.community.demo.dto.AccessTokenDTO;
 import test.majiang.community.demo.dto.GithubUserDTO;
 import test.majiang.community.demo.provider.GithubProvider;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class AuthorizeController {
@@ -22,6 +27,9 @@ public class AuthorizeController {
     @Autowired
     private GithubProvider githubProvider;
 
+    @Autowired
+    private UserMapper userMapper;
+
 
     /**
      * 通过@Value注解自动获取配置文件中的属性值并赋值给相应的变量
@@ -35,8 +43,8 @@ public class AuthorizeController {
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
-                           @RequestParam(name = "state") String state) {
-
+                           @RequestParam(name = "state") String state,
+                           HttpServletRequest request){
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clientSecret);
@@ -45,8 +53,24 @@ public class AuthorizeController {
         accessTokenDTO.setState(state);
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         System.out.println("----accessToken: " + accessToken);
-        GithubUserDTO user = githubProvider.getUser(accessToken);
-        System.out.println("====userLogin: " + user.getLogin());
-        return "index";
+        GithubUserDTO githubProviderUser = githubProvider.getUser(accessToken);
+//        System.out.println("====userLogin: " + user.getLogin());
+        if (githubProviderUser != null) {
+            //将用户信息保存至数据库
+            User user = new User();
+            user.setAccountId(githubProviderUser.getId());
+            user.setName(githubProviderUser.getLogin());
+            user.setToken(UUID.randomUUID().toString());
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+            userMapper.insert(user);
+            System.out.println("=====user:" + user);
+            //登陆成功，创建session和cookie
+            request.getSession().setAttribute("user",githubProviderUser);
+            return "redirect:/";
+        } else {
+            //登陆失败，重定向至首页
+            return "redirect:/";
+        }
     }
 }
