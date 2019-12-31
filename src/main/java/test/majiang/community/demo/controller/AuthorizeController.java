@@ -58,7 +58,7 @@ public class AuthorizeController {
         System.out.println("----accessToken: " + accessToken);
         GithubUserDTO githubProviderUser = githubProvider.getUser(accessToken);
 //        System.out.println("====userLogin: " + user.getLogin());
-        if (githubProviderUser != null) {
+        if (githubProviderUser != null && githubProviderUser.getId() != null) {
             //将用户信息保存至数据库
             User user = new User();
             user.setAccountId(githubProviderUser.getId());
