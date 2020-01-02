@@ -58,19 +58,17 @@ public class PublishController {
         //在发布问题前先要获取当前登陆用户，若用户没有登陆则页面停留在当前界面，否则跳转至首页
         User user = null;
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            model.addAttribute("error","Please Sign in first");
-            return "publish";
-        }
-        for (Cookie cookie : cookies) {
-            String cookieName = cookie.getName();
-            if (cookieName.equals("token")) {
-                String token = cookie.getValue();
-                user = userMapper.findByToken(token);
-                if (user != null) {
-                    request.getSession().setAttribute("user",user);
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
+                String cookieName = cookie.getName();
+                if (cookieName.equals("token")) {
+                    String token = cookie.getValue();
+                    user = userMapper.findByToken(token);
+                    if (user != null) {
+                        request.getSession().setAttribute("user",user);
+                    }
+                    break;
                 }
-                break;
             }
         }
 

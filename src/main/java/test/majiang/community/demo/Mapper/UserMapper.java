@@ -10,8 +10,8 @@ import test.majiang.community.demo.dao.User;
 @Mapper
 public interface UserMapper {
 
-    @Insert("insert into account_user(account_id,name,token,gmt_create,gmt_modified) " +
-            "values(#{accountId},#{name},#{token},#{gmtCreate},#{gmtModified})")
+    @Insert("insert into account_user(account_id,name,token,gmt_create,gmt_modified,avatar_url,type) " +
+            "values(#{accountId},#{name},#{token},#{gmtCreate},#{gmtModified},#{avatarUrl},#{type})")
     void insert(User user);
 
     @Select("select * from account_user where token = #{token}")
