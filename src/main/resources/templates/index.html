@@ -15,7 +15,7 @@
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Community</span>
             </button>
-            <a class="navbar-brand" href="#">Community</a>
+            <a class="navbar-brand" href="/">Community</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -46,6 +46,34 @@
         </div>
     </div>
 </nav>
+
+<div class="container-fluid" style="margin: 20px">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <h2><span class="glyphicon glyphicon-th-list" aria-hidden="true">List</span></h2>
+            <hr>
+
+            <div class="media" th:each="ques : ${questionList}">
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object img-rounded" th:src="${ques.user.avatarUrl}" alt="avatar" style="width: 38px;height: 38px">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading" th:text="${ques.title}"></h4>
+                    <span style="font-size: 12px;font-weight: normal;color: #999">
+                        <span th:text="${ques.commentCount}"></span> 个回复 • <span th:text="${ques.viewCount}"></span> 次浏览 • <span th:text="${#dates.format(ques.gmtCreate,'yyyy-MM-dd HH:mm:ss')}"></span>
+                    </span>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <h3>Popular Question</h3>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
